@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import { Test } from "forge-std/Test.sol";
-import { RWA20 } from "../src/RWA20.sol";
+import {Test} from "forge-std/Test.sol";
+import {RWA20} from "../src/RWA20.sol";
 
 contract RWA20Test is Test {
     RWA20 token;
@@ -37,7 +37,7 @@ contract RWA20Test is Test {
         emit log_named_uint("gas.batchMint(100)", g0 - gasleft());
 
         assertEq(token.totalSupply(), sum);
-        
+
         address[] memory from = new address[](50);
         uint256[] memory ramt = new uint256[](50);
         uint256 rsum = 0;
@@ -53,7 +53,7 @@ contract RWA20Test is Test {
         emit log_named_uint("gas.batchRedeem(50)", g0 - gasleft());
 
         assertEq(token.totalSupply(), sum - rsum);
-        
+
         for (uint256 i = 0; i < 50; i++) {
             assertEq(token.balanceOf(inv[i]), amt[i] - ramt[i]);
         }

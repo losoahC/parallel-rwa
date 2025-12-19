@@ -38,7 +38,7 @@ contract RWA20 {
     }
 
     // Setter
-    function setIssuer(address newIssuer) external onlyIssuer() {
+    function setIssuer(address newIssuer) external onlyIssuer {
         require(newIssuer != address(0), "ZERO_ISSUER");
         issuer = newIssuer;
         emit IssuerChanged(issuer, newIssuer);
@@ -62,10 +62,10 @@ contract RWA20 {
     }
 
     /// @notice Institutional batch issuance
-    function batchMint(address[] calldata to, uint256[] calldata amt) external onlyIssuer() {
+    function batchMint(address[] calldata to, uint256[] calldata amt) external onlyIssuer {
         uint256 n = to.length;
         require(n == amt.length, "LEN_MISMATCH");
-        
+
         uint256 sum = 0;
         for (uint256 i = 0; i < n; i++) {
             address receiver = to[i];
@@ -81,10 +81,10 @@ contract RWA20 {
     }
 
     /// @notice Institutional batch redemption/settlement (burn)
-    function batchRedeem(address[] calldata from, uint256[] calldata amt) external onlyIssuer() {
+    function batchRedeem(address[] calldata from, uint256[] calldata amt) external onlyIssuer {
         uint256 n = from.length;
         require(n == amt.length, "LEN_MISMATCH");
-        
+
         uint256 sum = 0;
         for (uint256 i = 0; i < n; i++) {
             address sender = from[i];
