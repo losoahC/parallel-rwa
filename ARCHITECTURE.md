@@ -59,6 +59,24 @@ RWA20 enforces compliance by calling the compliance module before state changes:
 
 This mirrors real workflows where issuance/redemption are gated by investor eligibility and risk controls.
 
+### Institutional Workflow Example
+
+1. **Preparation**  
+   - Compliance admin whitelists institutional investors.
+   - Stablecoin liquidity is provisioned to the coupon distributor.
+
+2. **Batch Issuance**  
+   - Issuer calls `batchMint` for multiple investors.
+   - Each mint includes a **pre-transfer compliance check**.
+
+3. **Cashflow Distribution**  
+   - Issue stablecoins to the distributor.
+   - Run `batchDistribute` for coupon payouts.
+
+4. **Redemption / Settlement**  
+   - `batchRedeem` is invoked for holding reductions.
+   - Compliance gating prevents non-whitelisted accounts.
+
 ---
 
 ## Parallel-Friendly Batch Design (Why high-throughput EVMs matter)
