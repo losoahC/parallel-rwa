@@ -47,24 +47,31 @@ contract Compliance {
     function canTransfer(
         address from,
         address to,
-        uint256 /*amt*/
+        uint256 /* amount */
     )
         external
         view
         returns (bool allowed, uint8 reason)
     {
-        if (!whitelisted[from]) {
-            return (false, 1);
+        // Mint: from == address(0) => only check receiver
+        if (from == address(0)) {
+            if (!whitelisted[to]) return (false, 2); // receiver not whitelisted
+            if (frozen[to]) return (false, 4); // receiver frozen
+            return (true, 0);
         }
-        if (!whitelisted[to]) {
-            return (false, 2);
+
+        // Burn/Redeem: to == address(0) => only check sender
+        if (to == address(0)) {
+            if (!whitelisted[from]) return (false, 1); // sender not whitelisted
+            if (frozen[from]) return (false, 3); // sender frozen
+            return (true, 0);
         }
-        if (frozen[from]) {
-            return (false, 3);
-        }
-        if (frozen[to]) {
-            return (false, 4);
-        }
+
+        // Normal transfer: check both sides
+        if (!whitelisted[from]) return (false, 1);
+        if (!whitelisted[to]) return (false, 2);
+        if (frozen[from]) return (false, 3);
+        if (frozen[to]) return (false, 4);
         return (true, 0);
     }
 }

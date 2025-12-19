@@ -3,12 +3,15 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {RWA20} from "../src/RWA20.sol";
+import "../src/Compliance.sol";
 
 contract RWA20Test is Test {
     RWA20 token;
+    Compliance comp;
 
     function setUp() public {
-        token = new RWA20("ParallelRWA", "PRWA", address(this));
+        comp = new Compliance(address(this));
+        token = new RWA20("ParallelRWA", "PRWA", address(this), address(comp));
     }
 
     function _makeAddrs(uint256 n) internal pure returns (address[] memory a) {
@@ -33,6 +36,9 @@ contract RWA20Test is Test {
         (uint256[] memory amt, uint256 sum) = _makeAmts(n, 1e18);
 
         uint256 g0 = gasleft();
+        for (uint256 i = 0; i < n; i++) {
+            comp.setWhitelisted(inv[i], true);
+        }
         token.batchMint(inv, amt);
         emit log_named_uint("gas.batchMint(100)", g0 - gasleft());
 
@@ -68,6 +74,19 @@ contract RWA20Test is Test {
         vm.prank(attacker);
         vm.expectRevert("NOT_ISSUER");
         // Could not reach
+        token.batchMint(inv, amt);
+    }
+
+    function test_mint_blocked_by_compliance() public {
+        address bob = address(0xB);
+
+        // bob not whitelisted
+        address[] memory inv = new address[](1);
+        inv[0] = bob;
+        uint256[] memory amt = new uint256[](1);
+        amt[0] = 100;
+
+        vm.expectRevert(abi.encodeWithSelector(RWA20.ComplianceFailed.selector, uint8(2)));
         token.batchMint(inv, amt);
     }
 }

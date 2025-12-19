@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 /// @notice Minimal ERC20 interface (stablecoin-like)
 interface IERC20 {
     function transfer(address to, uint256 amt) external returns (bool);
+
     function transferFrom(address from, address to, uint256 amt) external returns (bool);
 }
 
