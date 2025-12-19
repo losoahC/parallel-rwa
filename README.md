@@ -1,66 +1,20 @@
-## Foundry
+# ParallelRWA
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A modular RWA tokenization framework modeling institutional workflows:
+- **Batch issuance** and **batch redemption** (ownership registry)
+- **Batch coupon distribution** using stablecoins (cashflow settlement)
+- **Compliance gating** with whitelist/freeze and reason codes (ERC-1404 style)
 
-Foundry consists of:
+## Why this project
+Institutional RWA operations are batch-heavy (allocations, redemptions, periodic coupons). ParallelRWA is designed as a clean workload to study how high-throughput EVMs can benefit from batch patterns with mostly disjoint state writes.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Contracts
+- `RWA20.sol`: ownership registry + `batchMint` / `batchRedeem` + compliance checks
+- `CouponDistributor.sol`: stablecoin deposit + `batchDistribute`
+- `Compliance.sol`: whitelist/freeze policy engine + `canTransfer` reason codes
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+## Run tests (Foundry)
+```bash
+forge fmt
+forge test -vv
+forge test -vv --match-path test/benchmark.t.sol
